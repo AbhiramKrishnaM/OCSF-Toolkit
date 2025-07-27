@@ -1,0 +1,129 @@
+{
+  "name": "Network Activity",
+  "uid": 4001,
+  "category": "Network Activity",
+  "description": "Network activity events capture network connections, traffic, and communication patterns",
+  "attributes": {
+    "src_endpoint": {
+      "type": "object",
+      "required": true,
+      "description": "The source endpoint of the network activity",
+      "properties": {
+        "ip": {
+          "type": "string",
+          "description": "IP address of the source"
+        },
+        "hostname": {
+          "type": "string",
+          "description": "Hostname of the source"
+        },
+        "port": {
+          "type": "integer",
+          "description": "Port number used for the connection"
+        },
+        "interface": {
+          "type": "string",
+          "description": "Network interface used"
+        }
+      }
+    },
+    "dst_endpoint": {
+      "type": "object",
+      "required": true,
+      "description": "The destination endpoint of the network activity",
+      "properties": {
+        "ip": {
+          "type": "string",
+          "description": "IP address of the destination"
+        },
+        "hostname": {
+          "type": "string",
+          "description": "Hostname of the destination"
+        },
+        "port": {
+          "type": "integer",
+          "description": "Port number used for the connection"
+        },
+        "interface": {
+          "type": "string",
+          "description": "Network interface used"
+        }
+      }
+    },
+    "connection_info": {
+      "type": "object",
+      "description": "Information about the network connection",
+      "properties": {
+        "protocol": {
+          "type": "string",
+          "description": "Network protocol used",
+          "enum": ["TCP", "UDP", "ICMP", "HTTP", "HTTPS", "FTP", "SSH", "DNS"]
+        },
+        "direction": {
+          "type": "string",
+          "description": "Direction of the connection",
+          "enum": ["INBOUND", "OUTBOUND", "LATERAL"]
+        },
+        "state": {
+          "type": "string",
+          "description": "Connection state",
+          "enum": ["ESTABLISHED", "CLOSED", "LISTENING", "TIME_WAIT"]
+        }
+      }
+    },
+    "network_traffic": {
+      "type": "object",
+      "description": "Network traffic information",
+      "properties": {
+        "bytes_sent": {
+          "type": "integer",
+          "description": "Number of bytes sent"
+        },
+        "bytes_received": {
+          "type": "integer",
+          "description": "Number of bytes received"
+        },
+        "packets_sent": {
+          "type": "integer",
+          "description": "Number of packets sent"
+        },
+        "packets_received": {
+          "type": "integer",
+          "description": "Number of packets received"
+        }
+      }
+    },
+    "user": {
+      "type": "object",
+      "description": "User associated with the network activity",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique identifier for the user"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name of the user"
+        }
+      }
+    },
+    "process": {
+      "type": "object",
+      "description": "Process associated with the network activity",
+      "properties": {
+        "pid": {
+          "type": "integer",
+          "description": "Process ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Process name"
+        },
+        "path": {
+          "type": "string",
+          "description": "Path to the process executable"
+        }
+      }
+    }
+  }
+}

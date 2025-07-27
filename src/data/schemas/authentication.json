@@ -1,0 +1,98 @@
+{
+  "name": "Authentication",
+  "uid": 1001,
+  "category": "Identity & Access Management",
+  "description": "Authentication events capture user login/logout activities and authentication attempts",
+  "attributes": {
+    "user": {
+      "type": "object",
+      "required": true,
+      "description": "The user account associated with the authentication event",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique identifier for the user"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name of the user"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user"
+        },
+        "groups": {
+          "type": "array",
+          "description": "Groups the user belongs to"
+        }
+      }
+    },
+    "auth_protocol": {
+      "type": "string",
+      "required": true,
+      "description": "The authentication protocol used",
+      "enum": ["SAML", "OAuth", "LDAP", "Kerberos", "Radius", "TACACS", "Local"]
+    },
+    "status": {
+      "type": "string",
+      "required": true,
+      "description": "The result of the authentication attempt",
+      "enum": ["SUCCESS", "FAILURE", "PENDING"]
+    },
+    "src_endpoint": {
+      "type": "object",
+      "description": "The source endpoint where the authentication occurred",
+      "properties": {
+        "ip": {
+          "type": "string",
+          "description": "IP address of the source"
+        },
+        "hostname": {
+          "type": "string",
+          "description": "Hostname of the source"
+        },
+        "port": {
+          "type": "integer",
+          "description": "Port number used for the connection"
+        }
+      }
+    },
+    "dst_endpoint": {
+      "type": "object",
+      "description": "The destination endpoint where authentication was attempted",
+      "properties": {
+        "ip": {
+          "type": "string",
+          "description": "IP address of the destination"
+        },
+        "hostname": {
+          "type": "string",
+          "description": "Hostname of the destination"
+        },
+        "port": {
+          "type": "integer",
+          "description": "Port number used for the connection"
+        }
+      }
+    },
+    "auth_factors": {
+      "type": "array",
+      "description": "Authentication factors used",
+      "items": {
+        "type": "string",
+        "enum": ["PASSWORD", "TOKEN", "CERTIFICATE", "BIOMETRIC", "SSO"]
+      }
+    },
+    "failure_reason": {
+      "type": "string",
+      "description": "Reason for authentication failure",
+      "enum": [
+        "INVALID_CREDENTIALS",
+        "ACCOUNT_LOCKED",
+        "ACCOUNT_EXPIRED",
+        "INVALID_TOKEN",
+        "CERTIFICATE_EXPIRED"
+      ]
+    }
+  }
+}

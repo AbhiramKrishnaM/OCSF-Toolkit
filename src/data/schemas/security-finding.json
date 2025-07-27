@@ -1,0 +1,184 @@
+{
+  "name": "Security Finding",
+  "uid": 2001,
+  "category": "Security Finding",
+  "description": "Security findings capture detected security issues, vulnerabilities, and threats",
+  "attributes": {
+    "finding": {
+      "type": "object",
+      "required": true,
+      "description": "Information about the security finding",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique identifier for the finding"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the finding"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the finding"
+        },
+        "severity": {
+          "type": "string",
+          "description": "Severity level of the finding",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+        },
+        "status": {
+          "type": "string",
+          "description": "Current status of the finding",
+          "enum": [
+            "OPEN",
+            "IN_PROGRESS",
+            "RESOLVED",
+            "FALSE_POSITIVE",
+            "IGNORED"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of security finding",
+          "enum": [
+            "VULNERABILITY",
+            "MALWARE",
+            "SUSPICIOUS_ACTIVITY",
+            "COMPLIANCE_VIOLATION",
+            "THREAT_INDICATOR"
+          ]
+        }
+      }
+    },
+    "affected_assets": {
+      "type": "array",
+      "description": "Assets affected by the finding",
+      "items": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "type": "string",
+            "description": "Unique identifier for the asset"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the asset"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of asset",
+            "enum": ["HOST", "NETWORK", "APPLICATION", "USER", "DATA"]
+          },
+          "ip": {
+            "type": "string",
+            "description": "IP address of the asset"
+          },
+          "hostname": {
+            "type": "string",
+            "description": "Hostname of the asset"
+          }
+        }
+      }
+    },
+    "vulnerability": {
+      "type": "object",
+      "description": "Vulnerability information if applicable",
+      "properties": {
+        "cve_id": {
+          "type": "string",
+          "description": "CVE identifier"
+        },
+        "cvss_score": {
+          "type": "number",
+          "description": "CVSS score"
+        },
+        "cvss_vector": {
+          "type": "string",
+          "description": "CVSS vector string"
+        },
+        "description": {
+          "type": "string",
+          "description": "Vulnerability description"
+        }
+      }
+    },
+    "malware": {
+      "type": "object",
+      "description": "Malware information if applicable",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the malware"
+        },
+        "family": {
+          "type": "string",
+          "description": "Malware family"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of malware",
+          "enum": [
+            "VIRUS",
+            "TROJAN",
+            "RANSOMWARE",
+            "SPYWARE",
+            "ADWARE",
+            "ROOTKIT"
+          ]
+        },
+        "signature": {
+          "type": "string",
+          "description": "Malware signature"
+        }
+      }
+    },
+    "threat_actor": {
+      "type": "object",
+      "description": "Information about the threat actor",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the threat actor"
+        },
+        "category": {
+          "type": "string",
+          "description": "Category of threat actor",
+          "enum": [
+            "NATION_STATE",
+            "CYBERCRIMINAL",
+            "HACKTIVIST",
+            "INSIDER",
+            "UNKNOWN"
+          ]
+        },
+        "motivation": {
+          "type": "string",
+          "description": "Motivation of the threat actor"
+        }
+      }
+    },
+    "remediation": {
+      "type": "object",
+      "description": "Remediation information",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Remediation status",
+          "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETED", "FAILED"]
+        },
+        "description": {
+          "type": "string",
+          "description": "Remediation description"
+        },
+        "assignee": {
+          "type": "string",
+          "description": "Person assigned to remediation"
+        },
+        "due_date": {
+          "type": "string",
+          "description": "Due date for remediation"
+        }
+      }
+    }
+  }
+}
