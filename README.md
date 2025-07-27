@@ -1,12 +1,15 @@
-# React + Vite
+# OCSF POC - Integrated Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive web platform demonstrating the Open Cybersecurity Schema Framework (OCSF) through four integrated tools: schema visualization, data mapping, event generation, and real-time security monitoring. Built with React, TypeScript, and React Flow to showcase OCSF's capabilities in cybersecurity data standardization and analysis.
 
-Currently, two official plugins are available:
+## About OCSF
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The [Open Cybersecurity Schema Framework (OCSF)](https://ocsf.io/) is an open-source project delivering an extensible framework for developing schemas, along with a vendor-agnostic core security schema. Vendors and other data producers can adopt and extend the schema for their specific domains.
 
-## Expanding the ESLint configuration
+## Project Components
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Schema Visualizer** - Interactive OCSF schema browser with React Flow
+- **Data Flow Mapper** - Tool to map existing security data to OCSF schemas
+- **Event Generator** - Sample OCSF event creator and simulator
+- **Security Dashboard** - Real-time event visualization and analysis
+
