@@ -1,0 +1,15 @@
+# files 
+OCSF_POC_Write_Up.txt
+
+# env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# node modules
+node_modules
+
+# cursor files
+cursor.json
