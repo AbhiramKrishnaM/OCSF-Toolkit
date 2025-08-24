@@ -10,7 +10,7 @@ function App() {
           <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
             <Link to="/" className="font-semibold text-orange-400">OCSF Toolkit</Link>
             <nav className="flex items-center gap-4 text-sm">
-              <Link to="/ai" className="hover:text-orange-300">AI</Link>
+              {/* <Link to="/ai" className="hover:text-orange-300">AI</Link> */}
               <Link to="/visualizer" className="hover:text-orange-300">Schema Visualizer</Link>
             </nav>
           </div>
