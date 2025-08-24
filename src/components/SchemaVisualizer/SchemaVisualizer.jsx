@@ -6,6 +6,7 @@ import { getExtensions, getVersions } from "@/data/api/schema.js";
 import { getClassByName } from "@/data/api/categories.js";
 import { API_CONFIG } from "@/config/api.js";
 import SchemaGraph from "./graph/SchemaGraph.jsx";
+import ClassDetailsDrawer from "./ClassDetailsDrawer.jsx";
 
 function Section({ title, children, right }) {
   return (
@@ -33,6 +34,7 @@ export default function SchemaVisualizer() {
   const [selectedExtension, setSelectedExtension] = useState("");
   const [selectedClass, setSelectedClass] = useState(null);
   const [compositionMap, setCompositionMap] = useState({});
+  const [menu, setMenu] = useState(null); // {x, y, cls}
 
   useEffect(() => {
     let mounted = true;
@@ -143,6 +145,7 @@ export default function SchemaVisualizer() {
           objects={objects}
           compositionMap={compositionMap}
           onSelectClass={setSelectedClass}
+          onContextMenu={setMenu}
         />
       </div>
 
@@ -223,25 +226,19 @@ export default function SchemaVisualizer() {
 
       {/* Detail drawer */}
       {selectedClass && (
-        <div className="fixed right-6 bottom-6 z-20 w-96 rounded-xl border border-neutral-800 bg-neutral-900/90 backdrop-blur p-4 shadow-xl">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-sm font-semibold text-orange-400">{selectedClass.name}</div>
-              <div className="text-xs text-neutral-400">{selectedClass.caption}</div>
-            </div>
-            <button
-              className="text-neutral-400 hover:text-neutral-200"
-              onClick={() => setSelectedClass(null)}
-            >
-              ✕
-            </button>
-          </div>
-          <p className="mt-3 text-sm text-neutral-300 whitespace-pre-wrap">
-            {selectedClass.description || "No description available."}
-          </p>
-          <div className="mt-3 text-xs text-neutral-500">
-            Extends: {selectedClass.extends || 'base_event'}
-          </div>
+        <ClassDetailsDrawer cls={selectedClass} onClose={() => setSelectedClass(null)} />
+      )}
+
+      {/* Context menu */}
+      {menu && (
+        <div
+          className="fixed z-30 rounded-md border border-neutral-800 bg-neutral-900 text-sm text-neutral-200 shadow-xl"
+          style={{ left: menu.x, top: menu.y }}
+          onMouseLeave={() => setMenu(null)}
+        >
+          <button className="block w-full text-left px-3 py-2 hover:bg-neutral-800" onClick={() => { setSelectedClass(menu.cls); setMenu(null); }}>Open details</button>
+          <button className="block w-full text-left px-3 py-2 hover:bg-neutral-800" onClick={() => { setSelectedClass(menu.cls); setMenu(null); }}>View JSON Schema</button>
+          <button className="block w-full text-left px-3 py-2 hover:bg-neutral-800" onClick={() => { setSelectedClass(menu.cls); setMenu(null); }}>Generate Samples</button>
         </div>
       )}
     </div>

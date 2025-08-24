@@ -14,7 +14,7 @@ import BaseNode from "../nodes/BaseNode.jsx";
 
 const nodeTypes = { class: ClassNode, object: ObjectNode, base: BaseNode };
 
-export default function SchemaGraph({ categoryKey, classes, objects = [], compositionMap = {}, onSelectClass }) {
+export default function SchemaGraph({ categoryKey, classes, objects = [], compositionMap = {}, onSelectClass, onContextMenu }) {
   const { nodes: initialNodes, edges: initialEdges } = useMemo(() => {
     const nodes = [];
     const edges = [];
@@ -121,6 +121,11 @@ export default function SchemaGraph({ categoryKey, classes, objects = [], compos
     onSelectClass?.(node?.data?.raw);
   }, [onSelectClass]);
 
+  const onNodeContextMenu = useCallback((event, node) => {
+    event.preventDefault();
+    onContextMenu?.({ x: event.clientX, y: event.clientY, cls: node?.data?.raw });
+  }, [onContextMenu]);
+
   return (
     <ReactFlow
       nodes={nodes}
@@ -129,6 +134,7 @@ export default function SchemaGraph({ categoryKey, classes, objects = [], compos
       onEdgesChange={onEdgesChange}
       onInit={handleInit}
       onNodeClick={onNodeClick}
+      onNodeContextMenu={onNodeContextMenu}
       fitView
       nodeTypes={nodeTypes}
       defaultEdgeOptions={{ style: { stroke: "#a3a3a3" } }}
