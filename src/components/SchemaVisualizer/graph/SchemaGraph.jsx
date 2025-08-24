@@ -44,6 +44,12 @@ export default function SchemaGraph({ categoryKey, classes, objects = [], compos
         'file_activity', 'security_finding', 'vulnerability_finding'
       ].includes(c.name);
       
+      // Check if this class has threat hunting workflows
+      const hasThreatHunting = [
+        'process_activity', 'file_activity', 'registry_activity', 'authentication',
+        'memory_activity', 'account_change', 'rdp_activity', 'windows_service_activity'
+      ].includes(c.name);
+      
       nodes.push({
         id: c.name,
         type: "class",
@@ -55,6 +61,7 @@ export default function SchemaGraph({ categoryKey, classes, objects = [], compos
           deprecated: Boolean(c["@deprecated"]),
           profiles: c.profiles || [],
           hasCorrelations,
+          hasThreatHunting,
           raw: c,
         },
         position: { x: 40 + col * xGap, y: 120 + row * yGap },

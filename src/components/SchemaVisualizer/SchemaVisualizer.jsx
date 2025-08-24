@@ -8,6 +8,7 @@ import { API_CONFIG } from "@/config/api.js";
 import SchemaGraph from "./graph/SchemaGraph.jsx";
 import ClassDetailsDrawer from "./ClassDetailsDrawer.jsx";
 import EventCorrelationPanel from "./EventCorrelationPanel.jsx";
+import ThreatHuntingPanel from "./ThreatHuntingPanel.jsx";
 
 function Section({ title, children, right }) {
   return (
@@ -37,6 +38,7 @@ export default function SchemaVisualizer() {
   const [compositionMap, setCompositionMap] = useState({});
   const [menu, setMenu] = useState(null); // {x, y, cls}
   const [showCorrelation, setShowCorrelation] = useState(false);
+  const [showThreatHunting, setShowThreatHunting] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -235,6 +237,16 @@ export default function SchemaVisualizer() {
           >
             {showCorrelation ? 'Hide' : 'Show'} Correlation
           </button>
+          <button
+            onClick={() => setShowThreatHunting(!showThreatHunting)}
+            className={`px-3 py-1 text-xs rounded ${
+              showThreatHunting 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
+            }`}
+          >
+            {showThreatHunting ? 'Hide' : 'Show'} Threat Hunting
+          </button>
         </div>
       </div>
 
@@ -248,6 +260,14 @@ export default function SchemaVisualizer() {
         <EventCorrelationPanel 
           selectedClass={selectedClass} 
           onClose={() => setShowCorrelation(false)} 
+        />
+      )}
+
+      {/* Threat Hunting Panel */}
+      {showThreatHunting && selectedClass && (
+        <ThreatHuntingPanel 
+          selectedClass={selectedClass} 
+          onClose={() => setShowThreatHunting(false)} 
         />
       )}
 
