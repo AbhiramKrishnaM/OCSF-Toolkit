@@ -7,6 +7,7 @@ import { getClassByName } from "@/data/api/categories.js";
 import { API_CONFIG } from "@/config/api.js";
 import SchemaGraph from "./graph/SchemaGraph.jsx";
 import ClassDetailsDrawer from "./ClassDetailsDrawer.jsx";
+import EventCorrelationPanel from "./EventCorrelationPanel.jsx";
 
 function Section({ title, children, right }) {
   return (
@@ -35,6 +36,7 @@ export default function SchemaVisualizer() {
   const [selectedClass, setSelectedClass] = useState(null);
   const [compositionMap, setCompositionMap] = useState({});
   const [menu, setMenu] = useState(null); // {x, y, cls}
+  const [showCorrelation, setShowCorrelation] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -221,12 +223,30 @@ export default function SchemaVisualizer() {
               ))}
             </select>
           )}
+          <button
+            onClick={() => setShowCorrelation(!showCorrelation)}
+            className={`px-3 py-1 text-xs rounded ${
+              showCorrelation 
+                ? 'bg-orange-600 text-white' 
+                : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
+            }`}
+          >
+            {showCorrelation ? 'Hide' : 'Show'} Correlation
+          </button>
         </div>
       </div>
 
       {/* Detail drawer */}
       {selectedClass && (
         <ClassDetailsDrawer cls={selectedClass} onClose={() => setSelectedClass(null)} />
+      )}
+
+      {/* Event Correlation Panel */}
+      {showCorrelation && selectedClass && (
+        <EventCorrelationPanel 
+          selectedClass={selectedClass} 
+          onClose={() => setShowCorrelation(false)} 
+        />
       )}
 
       {/* Context menu */}

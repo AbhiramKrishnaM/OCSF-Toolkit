@@ -24,6 +24,12 @@ export default function ClassNode({ data }) {
         {data.deprecated && (
           <span className="rounded bg-red-900/40 px-1.5 py-0.5 text-[10px] text-red-300">deprecated</span>
         )}
+        {/* Correlation indicator */}
+        {data.hasCorrelations && (
+          <span className="ml-auto rounded-full bg-blue-600 px-1.5 py-0.5 text-[10px] text-white animate-pulse">
+            🔗
+          </span>
+        )}
       </div>
       <Handle type="source" position={Position.Bottom} style={{ opacity: 0 }} />
     </div>

@@ -37,6 +37,13 @@ export default function SchemaGraph({ categoryKey, classes, objects = [], compos
     (classes || []).forEach((c, idx) => {
       const col = idx % cols;
       const row = Math.floor(idx / cols);
+      
+      // Check if this class has correlation rules
+      const hasCorrelations = [
+        'authentication', 'network_activity', 'process_activity', 
+        'file_activity', 'security_finding', 'vulnerability_finding'
+      ].includes(c.name);
+      
       nodes.push({
         id: c.name,
         type: "class",
@@ -47,6 +54,7 @@ export default function SchemaGraph({ categoryKey, classes, objects = [], compos
           uid: c.uid,
           deprecated: Boolean(c["@deprecated"]),
           profiles: c.profiles || [],
+          hasCorrelations,
           raw: c,
         },
         position: { x: 40 + col * xGap, y: 120 + row * yGap },
