@@ -2,7 +2,7 @@ import SchemaVisualizer from "@/components/SchemaVisualizer/SchemaVisualizer.jsx
 
 export default function SchemaVisualizerPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6">
+    <div className="relative h-[calc(100vh-56px)]">{/* full viewport minus header */}
       <SchemaVisualizer />
     </div>
   );

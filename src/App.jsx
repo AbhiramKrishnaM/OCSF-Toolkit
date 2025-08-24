@@ -15,7 +15,7 @@ function App() {
             </nav>
           </div>
         </header>
-        <main className="mx-auto max-w-7xl px-4 py-6">
+        <main className="px-0 py-0">
           <Routes>
             <Route path="/" element={<Navigate to="/visualizer" replace />} />
             <Route
