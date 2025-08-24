@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   Background,
   Controls,
   MiniMap,
   ReactFlow,
-  useReactFlow,
   useEdgesState,
   useNodesState,
 } from "@xyflow/react";
@@ -43,17 +42,26 @@ export default function SchemaGraph({ categoryKey, classes, onSelectClass }) {
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const { fitView } = useReactFlow();
+  const rfInstanceRef = useRef(null);
 
   useEffect(() => {
     setNodes(initialNodes);
     setEdges(initialEdges);
-    // Fit view whenever the graph data changes
+    // Fit view whenever the graph data changes (after instance is available)
     const id = setTimeout(() => {
-      try { fitView({ padding: 0.2, includeHiddenNodes: true }); } catch {}
+      try {
+        rfInstanceRef.current?.fitView({ padding: 0.2, includeHiddenNodes: true });
+      } catch {}
     }, 0);
     return () => clearTimeout(id);
   }, [initialNodes, initialEdges, setNodes, setEdges]);
+
+  const handleInit = useCallback((instance) => {
+    rfInstanceRef.current = instance;
+    try {
+      instance.fitView({ padding: 0.2, includeHiddenNodes: true });
+    } catch {}
+  }, []);
 
   const onNodeClick = useCallback((_, node) => {
     onSelectClass?.(node?.data?.raw);
@@ -65,6 +73,7 @@ export default function SchemaGraph({ categoryKey, classes, onSelectClass }) {
       edges={edges}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
+      onInit={handleInit}
       onNodeClick={onNodeClick}
       fitView
       nodeTypes={nodeTypes}
