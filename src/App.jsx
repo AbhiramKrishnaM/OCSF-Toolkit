@@ -1,9 +1,11 @@
-import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import AiInput from "@/components/AiInput";
 import SchemaVisualizerPage from "@/pages/SchemaVisualizerPage.jsx";
 import DataQualityDashboardPage from "@/pages/DataQualityDashboardPage.jsx";
 
 function App() {
+  const location = useLocation();
+  
   return (
     <>
       <div className="min-h-screen bg-neutral-950 text-neutral-100">
@@ -12,8 +14,26 @@ function App() {
             <Link to="/" className="font-semibold text-orange-400">OCSF Toolkit</Link>
             <nav className="flex items-center gap-4 text-sm">
               {/* <Link to="/ai" className="hover:text-orange-300">AI</Link> */}
-              <Link to="/visualizer" className="hover:text-orange-300">Visualizer</Link>
-              <Link to="/dashboard" className="hover:text-orange-300">Data Quality</Link>
+              <Link 
+                to="/visualizer" 
+                className={`px-3 py-2 rounded-md transition-colors ${
+                  location.pathname === '/visualizer' 
+                    ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' 
+                    : 'hover:text-orange-300'
+                }`}
+              >
+                Visualizer
+              </Link>
+              <Link 
+                to="/dashboard" 
+                className={`px-3 py-2 rounded-md transition-colors ${
+                  location.pathname === '/dashboard' 
+                    ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' 
+                    : 'hover:text-orange-300'
+                }`}
+              >
+                Data Quality
+              </Link>
             </nav>
           </div>
         </header>

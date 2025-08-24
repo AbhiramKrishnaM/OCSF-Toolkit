@@ -1,46 +1,69 @@
 import { useState, useCallback } from "react";
+import { Upload, FileText, X } from "lucide-react";
 
 export function FileUpload({ onFileUpload }) {
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
 
-  const parseFile = useCallback(async (file) => {
-    setIsProcessing(true);
-    setError(null);
-    
-    try {
-      const fileExtension = file.name.split('.').pop().toLowerCase();
-      let data;
+  const extractTimestamp = (line) => {
+    // Simple timestamp extraction for common formats
+    const timestampRegex = /(\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}|\d{2}:\d{2}:\d{2})/;
+    const match = line.match(timestampRegex);
+    return match ? match[1] : new Date().toISOString();
+  };
+
+  const extractSource = (line) => {
+    // Simple source extraction
+    if (line.includes('firewall')) return 'firewall';
+    if (line.includes('ids')) return 'ids';
+    if (line.includes('antivirus')) return 'antivirus';
+    return 'unknown';
+  };
+
+  const parseLogFile = async (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
       
-      if (fileExtension === 'csv') {
-        data = await parseCSV(file);
-      } else if (fileExtension === 'json') {
-        data = await parseJSON(file);
-      } else if (fileExtension === 'log' || fileExtension === 'txt') {
-        data = await parseLogFile(file);
-      } else {
-        throw new Error(`Unsupported file format: ${fileExtension}. Please use CSV, JSON, or LOG files.`);
-      }
+      reader.onload = (e) => {
+        try {
+          const content = e.target.result;
+          const lines = content.split('\n').filter(line => line.trim());
+          
+          // Try to parse as JSON lines (one JSON object per line)
+          const jsonLines = lines.filter(line => {
+            try {
+              JSON.parse(line);
+              return true;
+            } catch {
+              return false;
+            }
+          });
+          
+          if (jsonLines.length > 0) {
+            const data = jsonLines.map(line => JSON.parse(line));
+            resolve(data);
+          } else {
+            // Try to parse as syslog format
+            const data = lines.map(line => ({
+              raw_message: line,
+              timestamp: extractTimestamp(line),
+              source: extractSource(line),
+              message: line
+            }));
+            resolve(data);
+          }
+        } catch {
+          reject(new Error('Failed to parse log file. Please check the format.'));
+        }
+      };
       
-      // Basic validation that this looks like security data
-      if (!Array.isArray(data) || data.length === 0) {
-        throw new Error('File must contain an array of security events.');
-      }
-      
-      if (data.length > 10000) {
-        throw new Error('File too large. Please limit to 10,000 events for browser processing.');
-      }
-      
-      onFileUpload(data, file.name);
-      
-    } catch (err) {
-      setError(err.message);
-      console.error('File parsing failed:', err);
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [onFileUpload]);
+      reader.onerror = () => reject(new Error('Failed to read log file.'));
+      reader.readAsText(file);
+    });
+  };
+
+
 
   const parseCSV = async (file) => {
     return new Promise((resolve, reject) => {
@@ -102,62 +125,42 @@ export function FileUpload({ onFileUpload }) {
     });
   };
 
-  const parseLogFile = async (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
+  const parseFile = useCallback(async (file) => {
+    setIsProcessing(true);
+    setError(null);
+    
+    try {
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      let data;
       
-      reader.onload = (e) => {
-        try {
-          const content = e.target.result;
-          const lines = content.split('\n').filter(line => line.trim());
-          
-          // Try to parse as JSON lines (one JSON object per line)
-          const jsonLines = lines.filter(line => {
-            try {
-              JSON.parse(line);
-              return true;
-            } catch {
-              return false;
-            }
-          });
-          
-          if (jsonLines.length > 0) {
-            const data = jsonLines.map(line => JSON.parse(line));
-            resolve(data);
-          } else {
-            // Try to parse as syslog format
-            const data = lines.map(line => ({
-              raw_message: line,
-              timestamp: extractTimestamp(line),
-              source: extractSource(line),
-              message: line
-            }));
-            resolve(data);
-          }
-        } catch {
-          reject(new Error('Failed to parse log file. Please check the format.'));
-        }
-      };
+      if (fileExtension === 'csv') {
+        data = await parseCSV(file);
+      } else if (fileExtension === 'json') {
+        data = await parseJSON(file);
+      } else if (fileExtension === 'log' || fileExtension === 'txt') {
+        data = await parseLogFile(file);
+      } else {
+        throw new Error(`Unsupported file format: ${fileExtension}. Please use CSV, JSON, or LOG files.`);
+      }
       
-      reader.onerror = () => reject(new Error('Failed to read log file.'));
-      reader.readAsText(file);
-    });
-  };
-
-  const extractTimestamp = (line) => {
-    // Simple timestamp extraction for common formats
-    const timestampRegex = /(\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}|\d{2}:\d{2}:\d{2})/;
-    const match = line.match(timestampRegex);
-    return match ? match[1] : new Date().toISOString();
-  };
-
-  const extractSource = (line) => {
-    // Simple source extraction
-    if (line.includes('firewall')) return 'firewall';
-    if (line.includes('ids')) return 'ids';
-    if (line.includes('antivirus')) return 'antivirus';
-    return 'unknown';
-  };
+      // Basic validation that this looks like security data
+      if (!Array.isArray(data) || data.length === 0) {
+        throw new Error('File must contain an array of security events.');
+      }
+      
+      if (data.length > 10000) {
+        throw new Error('File too large. Please limit to 10,000 events for browser processing.');
+      }
+      
+      onFileUpload(data, file.name);
+      
+    } catch (err) {
+      setError(err.message);
+      console.error('File parsing failed:', err);
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [onFileUpload]);
 
   const handleDragOver = useCallback((e) => {
     e.preventDefault();
@@ -187,35 +190,53 @@ export function FileUpload({ onFileUpload }) {
   }, [parseFile]);
 
   return (
-    <div className="bg-neutral-800 rounded-lg p-6">
-      <h3 className="text-lg font-semibold text-blue-400 mb-4">
-        📁 Upload Security Data
-      </h3>
+    <div className="bg-slate-900 rounded-xl border border-slate-800 p-6 shadow-sm">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2 bg-blue-900/20 rounded-lg">
+          <Upload className="w-5 h-5 text-blue-400" />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-white">
+            Upload Security Data
+          </h3>
+          <p className="text-sm text-slate-400">
+            Import your security logs and event data for OCSF validation
+          </p>
+        </div>
+      </div>
       
       <div
-        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+        className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${
           isDragging
-            ? 'border-blue-500 bg-blue-500/10'
-            : 'border-neutral-600 hover:border-neutral-500'
+            ? 'border-blue-500 bg-blue-900/10'
+            : 'border-slate-600 hover:border-slate-500'
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
         {isProcessing ? (
-          <div className="space-y-3">
-            <div className="text-2xl">🔄</div>
-            <div className="text-blue-400 font-medium">Processing file...</div>
-            <div className="text-sm text-neutral-400">Please wait while we parse your data</div>
+          <div className="space-y-4">
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
+            </div>
+            <div className="text-blue-600 dark:text-blue-400 font-medium">Processing file...</div>
+            <div className="text-sm text-slate-600 dark:text-slate-400">Please wait while we parse your data</div>
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="text-4xl">📤</div>
-            <div className="text-lg font-medium text-neutral-200">
-              Drop your security data file here
+            <div className="flex justify-center">
+              <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-full">
+                <Upload className="w-8 h-8 text-slate-600 dark:text-slate-400" />
+              </div>
             </div>
-            <div className="text-sm text-neutral-400">
-              or click to browse files
+            <div className="space-y-2">
+              <div className="text-lg font-medium text-white">
+                Drop your security data file here
+              </div>
+              <div className="text-sm text-slate-400">
+                or click to browse files
+              </div>
             </div>
             
             <input
@@ -227,12 +248,13 @@ export function FileUpload({ onFileUpload }) {
             />
             <label
               htmlFor="file-upload"
-              className="inline-block px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded cursor-pointer transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition-colors font-medium"
             >
+              <FileText className="w-4 h-4" />
               Choose File
             </label>
             
-            <div className="text-xs text-neutral-500 mt-4">
+            <div className="text-xs text-slate-400">
               Supported formats: CSV, JSON, LOG, TXT (max 10MB)
             </div>
           </div>
@@ -240,8 +262,16 @@ export function FileUpload({ onFileUpload }) {
       </div>
       
       {error && (
-        <div className="mt-4 p-3 bg-red-900/20 border border-red-800 rounded text-red-300 text-sm">
-          ❌ {error}
+        <div className="mt-4 p-4 bg-red-900/20 border border-red-800 rounded-lg">
+          <div className="flex items-start gap-3">
+            <div className="p-1 bg-red-900/30 rounded">
+              <X className="w-4 h-4 text-red-400" />
+            </div>
+            <div className="text-red-300 text-sm">
+              <div className="font-medium mb-1">Upload Error</div>
+              {error}
+            </div>
+          </div>
         </div>
       )}
     </div>
