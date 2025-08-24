@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { getCategories } from "@/data/api/categories.js";
 import { getAllObjects } from "@/data/api/objects.js";
 import { getExtensions, getVersions } from "@/data/api/schema.js";
+import { getClassByName } from "@/data/api/categories.js";
 import { API_CONFIG } from "@/config/api.js";
 import SchemaGraph from "./graph/SchemaGraph.jsx";
 
@@ -31,6 +32,7 @@ export default function SchemaVisualizer() {
   const [selectedVersion, setSelectedVersion] = useState("");
   const [selectedExtension, setSelectedExtension] = useState("");
   const [selectedClass, setSelectedClass] = useState(null);
+  const [compositionMap, setCompositionMap] = useState({});
 
   useEffect(() => {
     let mounted = true;
@@ -105,6 +107,32 @@ export default function SchemaVisualizer() {
     });
   }, [categoryClasses, query, selectedExtension]);
 
+  // Build composition map by peeking at class details and collecting referenced objects in properties
+  useEffect(() => {
+    let cancelled = false;
+    async function buildComposition() {
+      const map = {};
+      for (const c of filteredClasses.slice(0, 25)) { // limit for performance
+        try {
+          const res = await getClassByName(c.name);
+          const cls = res?.data || {};
+          const props = cls.properties || {};
+          const objectRefs = [];
+          Object.values(props).forEach((p) => {
+            if (typeof p?.type === 'string' && p.type.startsWith('object.')) {
+              const name = p.type.replace('object.', '');
+              objectRefs.push(name);
+            }
+          });
+          if (objectRefs.length) map[c.name] = objectRefs;
+        } catch {}
+      }
+      if (!cancelled) setCompositionMap(map);
+    }
+    if (filteredClasses.length) buildComposition();
+    return () => { cancelled = true; };
+  }, [filteredClasses]);
+
   return (
     <div className="relative h-full">
       {/* Full-screen canvas */}
@@ -112,6 +140,8 @@ export default function SchemaVisualizer() {
         <SchemaGraph
           categoryKey={selectedCategory}
           classes={filteredClasses}
+          objects={objects}
+          compositionMap={compositionMap}
           onSelectClass={setSelectedClass}
         />
       </div>
@@ -165,25 +195,29 @@ export default function SchemaVisualizer() {
       {/* Top-right filter controls */}
       <div className="pointer-events-none absolute right-6 top-6 z-20">
         <div className="pointer-events-auto rounded-xl border border-neutral-800 bg-neutral-900/80 backdrop-blur p-2 flex items-center gap-2">
-          <select
-            value={selectedExtension}
-            onChange={(e) => setSelectedExtension(e.target.value)}
-            className="bg-neutral-950 border border-neutral-800 text-xs rounded px-2 py-1"
-          >
-            <option value="">All extensions</option>
-            {extensions.map((e) => (
-              <option key={e.name} value={e.name}>{e.caption || e.name}</option>
-            ))}
-          </select>
-          <select
-            value={selectedVersion}
-            onChange={(e) => setSelectedVersion(e.target.value)}
-            className="bg-neutral-950 border border-neutral-800 text-xs rounded px-2 py-1"
-          >
-            {versions.map((v) => (
-              <option key={v} value={v}>{v}</option>
-            ))}
-          </select>
+          {extensions.length > 1 && (
+            <select
+              value={selectedExtension}
+              onChange={(e) => setSelectedExtension(e.target.value)}
+              className="bg-neutral-950 border border-neutral-800 text-xs rounded px-2 py-1"
+            >
+              <option value="">All extensions</option>
+              {extensions.map((e) => (
+                <option key={e.name} value={e.name}>{e.caption || e.name}</option>
+              ))}
+            </select>
+          )}
+          {versions.length > 1 && (
+            <select
+              value={selectedVersion}
+              onChange={(e) => setSelectedVersion(e.target.value)}
+              className="bg-neutral-950 border border-neutral-800 text-xs rounded px-2 py-1"
+            >
+              {versions.map((v) => (
+                <option key={v} value={v}>{v}</option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 

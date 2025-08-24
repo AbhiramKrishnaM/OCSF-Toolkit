@@ -9,36 +9,85 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import ClassNode from "../nodes/ClassNode.jsx";
+import ObjectNode from "../nodes/ObjectNode.jsx";
+import BaseNode from "../nodes/BaseNode.jsx";
 
-const nodeTypes = { class: ClassNode };
+const nodeTypes = { class: ClassNode, object: ObjectNode, base: BaseNode };
 
-export default function SchemaGraph({ categoryKey, classes, onSelectClass }) {
+export default function SchemaGraph({ categoryKey, classes, objects = [], compositionMap = {}, onSelectClass }) {
   const { nodes: initialNodes, edges: initialEdges } = useMemo(() => {
-    const nodes = (classes || []).map((c, idx) => ({
-      id: c.name,
-      type: "class",
-      data: {
-        title: c.caption || c.name,
-        subtitle: c.description || "",
-        extends: c.extends,
-        uid: c.uid,
-        raw: c,
-      },
-      position: { x: (idx % 4) * 320, y: Math.floor(idx / 4) * 180 },
-    }));
+    const nodes = [];
+    const edges = [];
 
-    const edges = (classes || [])
-      .filter((c) => c.extends && c.extends !== c.name)
-      .map((c) => ({
-        id: `${c.name}->${c.extends}`,
-        source: c.name,
-        target: c.extends,
-        animated: true,
-        style: { stroke: "#f97316" },
-      }));
+    // 1) Base/parent nodes from extends
+    const baseNames = new Set((classes || []).map((c) => c.extends || categoryKey).filter(Boolean));
+    Array.from(baseNames).forEach((base, idx) => {
+      nodes.push({
+        id: `base:${base}`,
+        type: "base",
+        data: { title: base },
+        position: { x: idx * 360, y: 20 },
+      });
+    });
+
+    // 2) Class nodes
+    (classes || []).forEach((c, idx) => {
+      nodes.push({
+        id: c.name,
+        type: "class",
+        data: {
+          title: c.caption || c.name,
+          subtitle: c.description || "",
+          extends: c.extends,
+          uid: c.uid,
+          deprecated: Boolean(c["@deprecated"]),
+          profiles: c.profiles || [],
+          raw: c,
+        },
+        position: { x: (idx % 4) * 360, y: 140 + Math.floor(idx / 4) * 200 },
+      });
+
+      const parent = c.extends || categoryKey;
+      if (parent) {
+        edges.push({
+          id: `e:${c.name}->base:${parent}`,
+          source: `base:${parent}`,
+          target: c.name,
+          type: "smoothstep",
+          animated: false,
+          style: { stroke: "#f97316", opacity: 0.7 },
+        });
+      }
+    });
+
+    // 3) Object nodes and composition edges
+    const objectNameToObj = new Map((objects || []).map((o) => [o.name, o]));
+    const usedObjectNames = new Set();
+    Object.entries(compositionMap || {}).forEach(([className, objectNames]) => {
+      objectNames.forEach((objName) => {
+        if (!objectNameToObj.has(objName)) return;
+        usedObjectNames.add(objName);
+        edges.push({
+          id: `e:${className}->obj:${objName}`,
+          source: className,
+          target: `obj:${objName}`,
+          type: "smoothstep",
+          animated: false,
+          style: { stroke: "#a3a3a3", opacity: 0.5 },
+        });
+      });
+    });
+    Array.from(usedObjectNames).forEach((name, idx) => {
+      nodes.push({
+        id: `obj:${name}`,
+        type: "object",
+        data: { title: name },
+        position: { x: (idx % 5) * 280, y: 140 + ((classes?.length || 0) / 4 + 2) * 200 },
+      });
+    });
 
     return { nodes, edges };
-  }, [classes]);
+  }, [classes, objects, compositionMap, categoryKey]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -80,9 +129,8 @@ export default function SchemaGraph({ categoryKey, classes, onSelectClass }) {
       defaultEdgeOptions={{ style: { stroke: "#a3a3a3" } }}
       proOptions={{ hideAttribution: true }}
     >
+      {/* Background grid only; hide minimap/controls as requested */}
       <Background color="#2a2a2a" gap={16} />
-      <MiniMap pannable zoomable maskColor="rgba(10,10,10,0.7)" nodeColor="#f97316" />
-      <Controls position="bottom-left" />
     </ReactFlow>
   );
 }
