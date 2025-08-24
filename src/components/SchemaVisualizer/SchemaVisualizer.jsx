@@ -129,7 +129,9 @@ export default function SchemaVisualizer() {
             }
           });
           if (objectRefs.length) map[c.name] = objectRefs;
-        } catch {}
+        } catch (error) {
+          console.warn('Failed to fetch class details:', error);
+        }
       }
       if (!cancelled) setCompositionMap(map);
     }

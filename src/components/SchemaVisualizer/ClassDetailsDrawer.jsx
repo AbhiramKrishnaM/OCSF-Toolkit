@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { getClassByName } from "@/data/api/categories.js";
-import { getClassSample, generateMultipleClassSamples } from "@/data/api/sample.js";
+import { generateMultipleClassSamples } from "@/data/api/sample.js";
 import {
   CodeBlock,
   CodeBlockBody,
@@ -52,7 +52,9 @@ export default function ClassDetailsDrawer({ cls, onClose }) {
       const res = await generateMultipleClassSamples(cls.name, n);
       setSamples(res.data || []);
       setActiveTab("sample");
-    } catch {}
+            } catch (error) {
+          console.warn('Failed to fetch class details:', error);
+        }
   }
 
   if (!cls) return null;

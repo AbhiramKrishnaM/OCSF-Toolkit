@@ -111,19 +111,23 @@ export default function SchemaGraph({ categoryKey, classes, objects = [], compos
     setEdges(initialEdges);
     // Fit view whenever the graph data changes (after instance is available)
     const id = setTimeout(() => {
-      try {
-        rfInstanceRef.current?.fitView({ padding: 0.2, includeHiddenNodes: true });
-      } catch {}
+              try {
+          rfInstanceRef.current?.fitView({ padding: 0.2, includeHiddenNodes: true });
+        } catch (error) {
+          console.warn('Failed to fit view:', error);
+        }
     }, 0);
     return () => clearTimeout(id);
   }, [initialNodes, initialEdges, setNodes, setEdges]);
 
   const handleInit = useCallback((instance) => {
     rfInstanceRef.current = instance;
-    try {
-      instance.fitView({ padding: 0.2, includeHiddenNodes: true });
-    } catch {}
-  }, []);
+            try {
+          instance.fitView({ padding: 0.2, includeHiddenNodes: true });
+        } catch (error) {
+          console.warn('Failed to fit view:', error);
+        }
+      }, []);
 
   const onNodeClick = useCallback((_, node) => {
     onSelectClass?.(node?.data?.raw);

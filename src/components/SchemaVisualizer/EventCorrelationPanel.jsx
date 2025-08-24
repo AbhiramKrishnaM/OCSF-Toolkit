@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { generateMultipleClassSamples } from "@/data/api/sample.js";
 
 export default function EventCorrelationPanel({ selectedClass, onClose }) {
@@ -63,8 +63,8 @@ export default function EventCorrelationPanel({ selectedClass, onClose }) {
                 timestamp: new Date().toISOString()
               }
             });
-          } catch (e) {
-            console.warn(`Failed to generate events for rule: ${rule.name}`);
+          } catch (error) {
+            console.warn(`Failed to generate events for rule: ${rule.name}`, error);
           }
         }
         
