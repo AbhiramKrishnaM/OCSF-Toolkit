@@ -1,6 +1,6 @@
 import { Routes, Route, Link, Navigate } from "react-router-dom";
 import AiInput from "@/components/AiInput";
-import SchemaVisualizer from "@/components/SchemaVisualizer/SchemaVisualizer";
+import SchemaVisualizerPage from "@/pages/SchemaVisualizerPage.jsx";
 
 function App() {
   return (
@@ -28,7 +28,7 @@ function App() {
                 </div>
               }
             />
-            <Route path="/visualizer" element={<SchemaVisualizer />} />
+            <Route path="/visualizer" element={<SchemaVisualizerPage />} />
             <Route path="*" element={<Navigate to="/visualizer" replace />} />
           </Routes>
         </main>

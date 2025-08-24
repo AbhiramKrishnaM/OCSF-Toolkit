@@ -58,7 +58,9 @@ export default function SchemaVisualizer() {
         setCategoriesRaw(attributes);
         setVersions(Array.isArray(vers?.data) ? vers.data : []);
         setExtensions(Array.isArray(exts?.data) ? exts.data : []);
-        setSelectedVersion((Array.isArray(vers?.data) ? vers.data : [])[0] || "");
+        const initialVersion = (Array.isArray(vers?.data) ? vers.data : [])[0] || "";
+        setSelectedVersion(initialVersion);
+        if (list.length) setSelectedCategory(list[0].key);
         setObjects(Array.isArray(objs?.data) ? objs.data : []);
       } catch (e) {
         if (!mounted) return;
@@ -173,7 +175,7 @@ export default function SchemaVisualizer() {
             </div>
           }
         >
-          <div className="h-[540px] rounded-lg overflow-hidden border border-neutral-800 bg-neutral-950">
+          <div className="h-[70vh] rounded-lg overflow-hidden border border-neutral-800 bg-neutral-950">
             <SchemaGraph
               categoryKey={selectedCategory}
               classes={filteredClasses}

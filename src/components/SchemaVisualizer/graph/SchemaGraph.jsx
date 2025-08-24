@@ -1,32 +1,15 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import {
   Background,
   Controls,
   MiniMap,
   ReactFlow,
+  useReactFlow,
   useEdgesState,
   useNodesState,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-
-function ClassNode({ data }) {
-  return (
-    <div className="rounded-xl bg-neutral-900 border border-neutral-800 shadow-sm overflow-hidden">
-      <div className="px-3 py-2 border-b border-neutral-800 flex items-center justify-between">
-        <div className="text-sm font-semibold text-neutral-200 truncate">{data.title}</div>
-        {data.uid && (
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400">{data.uid}</span>
-        )}
-      </div>
-      <div className="p-3 text-xs text-neutral-400 line-clamp-3 min-w-[220px]">
-        {data.subtitle}
-      </div>
-      <div className="px-3 py-2 text-xs bg-neutral-950/80 text-neutral-500">
-        extends: {data.extends || "base_event"}
-      </div>
-    </div>
-  );
-}
+import ClassNode from "../nodes/ClassNode.jsx";
 
 const nodeTypes = { class: ClassNode };
 
@@ -60,6 +43,17 @@ export default function SchemaGraph({ categoryKey, classes, onSelectClass }) {
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const { fitView } = useReactFlow();
+
+  useEffect(() => {
+    setNodes(initialNodes);
+    setEdges(initialEdges);
+    // Fit view whenever the graph data changes
+    const id = setTimeout(() => {
+      try { fitView({ padding: 0.2, includeHiddenNodes: true }); } catch {}
+    }, 0);
+    return () => clearTimeout(id);
+  }, [initialNodes, initialEdges, setNodes, setEdges]);
 
   const onNodeClick = useCallback((_, node) => {
     onSelectClass?.(node?.data?.raw);
