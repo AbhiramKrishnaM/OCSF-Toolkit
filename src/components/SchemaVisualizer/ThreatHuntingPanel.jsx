@@ -123,7 +123,7 @@ export default function ThreatHuntingPanel({ selectedClass, onClose }) {
       setActiveWorkflow(applicableWorkflow);
       startInvestigation(applicableWorkflow, selectedClass);
     }
-  }, [selectedClass]);
+  }, [selectedClass, huntingWorkflows]);
 
   const startInvestigation = async (workflow, startingClass) => {
     setLoading(true);
@@ -212,7 +212,7 @@ export default function ThreatHuntingPanel({ selectedClass, onClose }) {
               <div className="text-xs text-neutral-500">Building investigation path...</div>
             ) : (
               <div className="space-y-3">
-                {investigationPath.map((step, idx) => (
+                {investigationPath.map((step) => (
                   <div key={step.step} className="p-3 rounded border border-neutral-800 bg-neutral-950">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
