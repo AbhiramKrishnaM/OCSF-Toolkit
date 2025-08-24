@@ -1,0 +1,38 @@
+/* Hide React Flow branding and ensure clean interface */
+.react-flow__attribution {
+  display: none !important;
+}
+
+.react-flow__attribution a {
+  display: none !important;
+}
+
+/* Hide any remaining React Flow watermarks */
+.react-flow__watermark {
+  display: none !important;
+}
+
+/* Ensure clean background */
+.react-flow__pane {
+  background: transparent !important;
+}
+
+/* Hide any default React Flow styling that might interfere */
+.react-flow__node {
+  background: transparent !important;
+}
+
+/* Custom styling for the workflow canvas */
+.cybersecflow-canvas {
+  background: #111827 !important;
+}
+
+/* Hide any scrollbars that might show React Flow branding */
+.react-flow__viewport {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.react-flow__viewport::-webkit-scrollbar {
+  display: none;
+}

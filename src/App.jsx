@@ -2,6 +2,7 @@ import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import AiInput from "@/components/AiInput";
 import SchemaVisualizerPage from "@/pages/SchemaVisualizerPage.jsx";
 import DataQualityDashboardPage from "@/pages/DataQualityDashboardPage.jsx";
+import CyberSecFlowPage from "@/pages/CyberSecFlowPage.jsx";
 
 function App() {
   const location = useLocation();
@@ -36,6 +37,16 @@ function App() {
                 >
                   Data Quality
                 </Link>
+                <Link
+                  to="/cybersecflow"
+                  className={`px-3 py-2 rounded-md transition-colors ${
+                    location.pathname === '/cybersecflow'
+                      ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
+                      : 'hover:text-orange-300'
+                  }`}
+                >
+                  CyberSecFlow
+                </Link>
               </nav>
             </div>
           </header>
@@ -54,6 +65,7 @@ function App() {
             />
             <Route path="/visualizer" element={<SchemaVisualizerPage />} />
             <Route path="/dashboard" element={<DataQualityDashboardPage />} />
+            <Route path="/cybersecflow" element={<CyberSecFlowPage />} />
             <Route path="*" element={<Navigate to="/visualizer" replace />} />
           </Routes>
         </main>
