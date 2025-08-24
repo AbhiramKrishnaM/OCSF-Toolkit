@@ -11,7 +11,7 @@ function App() {
             <Link to="/" className="font-semibold text-orange-400">OCSF Toolkit</Link>
             <nav className="flex items-center gap-4 text-sm">
               {/* <Link to="/ai" className="hover:text-orange-300">AI</Link> */}
-              <Link to="/visualizer" className="hover:text-orange-300">Schema Visualizer</Link>
+              <Link to="/visualizer" className="hover:text-orange-300">Visualizer</Link>
             </nav>
           </div>
         </header>
