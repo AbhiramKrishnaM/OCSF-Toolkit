@@ -9,34 +9,36 @@ function App() {
   return (
     <>
       <div className="min-h-screen bg-neutral-950 text-neutral-100">
-        <header className="sticky top-0 z-10 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur">
-          <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
-            <Link to="/" className="font-semibold text-orange-400">OCSF Toolkit</Link>
-            <nav className="flex items-center gap-4 text-sm">
-              {/* <Link to="/ai" className="hover:text-orange-300">AI</Link> */}
-              <Link 
-                to="/visualizer" 
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  location.pathname === '/visualizer' 
-                    ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' 
-                    : 'hover:text-orange-300'
-                }`}
-              >
-                Visualizer
+                  <header className="sticky top-0 z-10 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur">
+            <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
+              <Link to="/" className="flex items-center">
+                <img src="/dashboard.svg" alt="OCSF Toolkit" className="w-6 h-6" />
               </Link>
-              <Link 
-                to="/dashboard" 
-                className={`px-3 py-2 rounded-md transition-colors ${
-                  location.pathname === '/dashboard' 
-                    ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' 
-                    : 'hover:text-orange-300'
-                }`}
-              >
-                Data Quality
-              </Link>
-            </nav>
-          </div>
-        </header>
+              <nav className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-4 text-sm">
+                {/* <Link to="/ai" className="hover:text-orange-300">AI</Link> */}
+                <Link
+                  to="/visualizer"
+                  className={`px-3 py-2 rounded-md transition-colors ${
+                    location.pathname === '/visualizer'
+                      ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
+                      : 'hover:text-orange-300'
+                  }`}
+                >
+                  Visualizer
+                </Link>
+                <Link
+                  to="/dashboard"
+                  className={`px-3 py-2 rounded-md transition-colors ${
+                    location.pathname === '/dashboard'
+                      ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
+                      : 'hover:text-orange-300'
+                  }`}
+                >
+                  Data Quality
+                </Link>
+              </nav>
+            </div>
+          </header>
         <main className="px-0 py-0">
           <Routes>
             <Route path="/" element={<Navigate to="/visualizer" replace />} />
