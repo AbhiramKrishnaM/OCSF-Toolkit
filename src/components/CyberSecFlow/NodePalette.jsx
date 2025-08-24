@@ -12,8 +12,8 @@ const nodeCategories = [
     nodes: [
       { type: 'alert-trigger', label: 'Alert Trigger', description: 'Start workflow on security alert' },
       { type: 'schedule-trigger', label: 'Schedule', description: 'Run workflow on schedule' },
-      { type: 'webhook-trigger', label: 'Webhook', description: 'Trigger via HTTP webhook' },
-      { type: 'file-trigger', label: 'File Watch', description: 'Monitor file changes' }
+      { type: 'webhook', label: 'Webhook', description: 'Trigger via HTTP webhook' },
+      { type: 'file-watch', label: 'File Watch', description: 'Monitor file changes' }
     ]
   },
   {
@@ -25,7 +25,7 @@ const nodeCategories = [
       { type: 'ioc-lookup', label: 'IOC Lookup', description: 'Check indicators of compromise' },
       { type: 'threat-feed', label: 'Threat Feed', description: 'Fetch threat intelligence data' },
       { type: 'reputation-check', label: 'Reputation Check', description: 'Check IP/domain reputation' },
-      { type: 'vuln-scan', label: 'Vulnerability Scan', description: 'Scan for vulnerabilities' }
+      { type: 'vulnerability-scan', label: 'Vulnerability Scan', description: 'Scan for vulnerabilities' }
     ]
   },
   {
@@ -48,7 +48,7 @@ const nodeCategories = [
     nodes: [
       { type: 'anomaly-detection', label: 'Anomaly Detection', description: 'Detect unusual patterns' },
       { type: 'threat-scoring', label: 'Threat Scoring', description: 'Calculate threat scores' },
-      { type: 'correlation', label: 'Event Correlation', description: 'Correlate related events' },
+      { type: 'event-correlation', label: 'Event Correlation', description: 'Correlate related events' },
       { type: 'rag-query', label: 'RAG Query', description: 'Query security knowledge base' }
     ]
   },
@@ -108,8 +108,6 @@ const NodePalette = () => {
         {/* Visual indicator */}
         <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-1 h-16 bg-neutral-600 rounded-r-full opacity-60 group-hover:opacity-100 transition-opacity" />
       </div>
-      
-
       
       {/* Floating Node Palette */}
       <div 

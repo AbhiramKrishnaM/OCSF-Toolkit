@@ -4,7 +4,7 @@ import { Bell, MessageSquare, Users } from 'lucide-react';
 
 const SendNotificationNode = ({ data, selected }) => {
   return (
-    <div className={`relative ${selected ? 'ring-2 ring-orange-400' : ''}`}>
+    <div className="relative">
       <Handle type="target" position={Position.Left} className="w-3 h-3 bg-red-500" />
       
       <div className="bg-gradient-to-br from-red-600 to-red-800 rounded-lg p-4 min-w-[200px] border-2 border-red-500 hover:border-red-400 transition-all duration-200">

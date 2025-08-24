@@ -41,7 +41,7 @@ const WorkflowToolbar = () => {
               onClick={stopWorkflow}
               variant="ghost"
               size="sm"
-              className="text-neutral-400 hover:text-white"
+              className="text-neutral-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200"
             >
               <Square className="w-4 h-4" />
             </Button>
@@ -50,7 +50,7 @@ const WorkflowToolbar = () => {
               onClick={resetWorkflow}
               variant="ghost"
               size="sm"
-              className="text-neutral-400 hover:text-white"
+              className="text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-200"
             >
               <RotateCcw className="w-4 h-4" />
             </Button>
@@ -65,9 +65,11 @@ const WorkflowToolbar = () => {
               onClick={() => setShowGrid(!showGrid)}
               variant="ghost"
               size="sm"
-              className={`text-neutral-400 hover:text-white ${
-                showGrid ? 'text-orange-400' : ''
-              }`}
+              className={`${
+                showGrid 
+                  ? 'text-orange-500 bg-orange-500/10 hover:bg-orange-500/20' 
+                  : 'text-neutral-400 hover:text-orange-400 hover:bg-orange-500/10'
+              } transition-all duration-200`}
             >
               {showGrid ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </Button>
@@ -77,11 +79,11 @@ const WorkflowToolbar = () => {
           <div className="w-px h-6 bg-neutral-600" />
 
           {/* Status Indicator */}
-          <div className="flex items-center gap-2 px-3 py-1 bg-neutral-800/50 rounded-lg border border-neutral-600">
+          <div className="flex items-center gap-2 px-3 py-1 bg-neutral-800/80 rounded-lg border border-neutral-600 hover:border-neutral-500 transition-colors">
             <div className={`w-2 h-2 rounded-full ${
-              isRunning ? 'bg-green-400' : 'bg-neutral-500'
+              isRunning ? 'bg-green-400' : 'bg-neutral-400'
             }`} />
-            <span className="text-xs text-neutral-300 font-medium">
+            <span className="text-xs text-white font-medium">
               {isRunning ? 'Running' : 'Stopped'}
             </span>
           </div>

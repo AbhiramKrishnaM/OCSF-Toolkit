@@ -25,6 +25,35 @@ const CyberSecFlow = () => {
     setSelectedNode(node);
   }, []);
 
+  const onDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const onDrop = useCallback(
+    (event) => {
+      event.preventDefault();
+
+      const reactFlowBounds = event.currentTarget.getBoundingClientRect();
+      const data = JSON.parse(event.dataTransfer.getData('application/reactflow'));
+
+      const position = {
+        x: event.clientX - reactFlowBounds.left,
+        y: event.clientY - reactFlowBounds.top,
+      };
+
+      const newNode = {
+        id: `${data.type}-${Date.now()}`,
+        type: data.type,
+        position,
+        data: data.data,
+      };
+
+      setNodes((nds) => nds.concat(newNode));
+    },
+    [setNodes]
+  );
+
   const runWorkflow = async () => {
     setIsRunning(true);
     // Simulate workflow execution
@@ -52,6 +81,8 @@ const CyberSecFlow = () => {
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             onNodeClick={onNodeClick}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
             nodeTypes={nodeTypes}
             fitView
             className="bg-neutral-900 cybersecflow-canvas"

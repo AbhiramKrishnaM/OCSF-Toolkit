@@ -6,7 +6,7 @@ const RagQueryNode = ({ data, selected }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className={`relative ${selected ? 'ring-2 ring-orange-400' : ''}`}>
+    <div className="relative">
       <Handle type="target" position={Position.Left} className="w-3 h-3 bg-purple-500" />
       
       <div 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Play, Pause, Trash2, Copy, Eye, AlertTriangle, Database, Bot } from 'lucide-react';
+import { Settings, Play, Pause, Trash2, Copy, Eye, AlertTriangle, Database, Bot, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -178,46 +178,54 @@ const WorkflowSidebar = ({ selectedNode, nodes, edges }) => {
           </div>
         </div>
         
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1 border-neutral-600 text-neutral-300 hover:bg-neutral-800">
-            <Copy className="w-4 h-4 mr-2" />
-            Duplicate
-          </Button>
-          <Button variant="outline" size="sm" className="border-red-600 text-red-400 hover:bg-red-600/10">
-            <Trash2 className="w-4 h-4" />
-          </Button>
-        </div>
+                  <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex-1 border-neutral-600 text-neutral-300 hover:text-blue-400 hover:border-blue-500 hover:bg-blue-500/10 transition-all duration-200"
+            >
+              <Copy className="w-4 h-4 mr-2" />
+              Duplicate
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-neutral-600 text-neutral-300 hover:text-red-400 hover:border-red-500 hover:bg-red-500/10 transition-all duration-200"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-neutral-800">
-        {['properties', 'execution', 'logs'].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
-              activeTab === tab
-                ? 'text-orange-400 border-b-2 border-orange-400'
-                : 'text-neutral-400 hover:text-neutral-300'
-            }`}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </button>
-        ))}
-      </div>
+              {/* Tabs */}
+        <div className="flex border-b border-neutral-700">
+          {['properties', 'execution', 'logs'].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                activeTab === tab
+                  ? 'text-blue-400 border-b-2 border-blue-400 bg-blue-500/10'
+                  : 'text-neutral-400 hover:text-neutral-300 hover:bg-neutral-800/50'
+              }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
 
       {/* Tab Content */}
       <div className="p-4 max-h-[calc(70vh-140px)] overflow-y-auto">
         {activeTab === 'properties' && (
           <div className="space-y-6">
-            <h4 className="text-md font-medium text-white">Configuration</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">Configuration</h4>
             {renderNodeProperties()}
           </div>
         )}
         
         {activeTab === 'execution' && (
           <div className="space-y-4">
-            <h4 className="text-md font-medium text-white">Execution Status</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">Execution Status</h4>
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-neutral-800 rounded-lg">
                 <span className="text-sm text-neutral-300">Last Run</span>
@@ -237,14 +245,14 @@ const WorkflowSidebar = ({ selectedNode, nodes, edges }) => {
         
         {activeTab === 'logs' && (
           <div className="space-y-4">
-            <h4 className="text-md font-medium text-white">Recent Logs</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">Recent Logs</h4>
             <div className="space-y-2">
               {[
                 { level: 'info', message: 'Node executed successfully', time: '2 hours ago' },
                 { level: 'warning', message: 'Rate limit approaching', time: '4 hours ago' },
                 { level: 'error', message: 'API connection failed', time: '1 day ago' }
               ].map((log, index) => (
-                <div key={index} className="p-3 bg-neutral-800 rounded-lg">
+                <div key={index} className="p-3 bg-neutral-800/50 rounded-lg border border-neutral-700 hover:border-neutral-600 transition-colors">
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`text-xs px-2 py-1 rounded ${
                       log.level === 'error' ? 'bg-red-600/20 text-red-400' :
