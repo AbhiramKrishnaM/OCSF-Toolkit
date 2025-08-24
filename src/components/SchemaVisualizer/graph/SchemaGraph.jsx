@@ -30,8 +30,13 @@ export default function SchemaGraph({ categoryKey, classes, objects = [], compos
       });
     });
 
-    // 2) Class nodes
+    // 2) Class nodes arranged in a grid with consistent spacing
+    const cols = 2; // wider nodes → fewer columns
+    const xGap = 620;
+    const yGap = 210;
     (classes || []).forEach((c, idx) => {
+      const col = idx % cols;
+      const row = Math.floor(idx / cols);
       nodes.push({
         id: c.name,
         type: "class",
@@ -44,7 +49,7 @@ export default function SchemaGraph({ categoryKey, classes, objects = [], compos
           profiles: c.profiles || [],
           raw: c,
         },
-        position: { x: (idx % 4) * 360, y: 140 + Math.floor(idx / 4) * 200 },
+        position: { x: 40 + col * xGap, y: 120 + row * yGap },
       });
 
       const parent = c.extends || categoryKey;
@@ -82,7 +87,7 @@ export default function SchemaGraph({ categoryKey, classes, objects = [], compos
         id: `obj:${name}`,
         type: "object",
         data: { title: name },
-        position: { x: (idx % 5) * 280, y: 140 + ((classes?.length || 0) / 4 + 2) * 200 },
+        position: { x: (idx % 4) * 300, y: 140 + (Math.ceil((classes?.length || 0) / cols) + 1) * yGap },
       });
     });
 

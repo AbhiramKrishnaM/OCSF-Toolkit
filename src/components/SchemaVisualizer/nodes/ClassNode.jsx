@@ -1,7 +1,7 @@
 import { Handle, Position } from "@xyflow/react";
 export default function ClassNode({ data }) {
   return (
-    <div className="rounded-xl bg-neutral-900 border border-neutral-800 shadow-[0_0_0_1px_rgba(255,255,255,0.03)] overflow-hidden">
+    <div className="rounded-xl bg-neutral-900 border border-neutral-800 shadow-[0_0_0_1px_rgba(255,255,255,0.03)] overflow-hidden w-[560px]">
       <Handle type="target" position={Position.Top} style={{ opacity: 0 }} />
       <div className="px-3 py-2 border-b border-neutral-800 flex items-center justify-between">
         <div className="text-sm font-semibold text-neutral-200 truncate">{data.title}</div>
