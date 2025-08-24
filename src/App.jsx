@@ -1,6 +1,7 @@
 import { Routes, Route, Link, Navigate } from "react-router-dom";
 import AiInput from "@/components/AiInput";
 import SchemaVisualizerPage from "@/pages/SchemaVisualizerPage.jsx";
+import DataQualityDashboardPage from "@/pages/DataQualityDashboardPage.jsx";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
             <nav className="flex items-center gap-4 text-sm">
               {/* <Link to="/ai" className="hover:text-orange-300">AI</Link> */}
               <Link to="/visualizer" className="hover:text-orange-300">Visualizer</Link>
+              <Link to="/dashboard" className="hover:text-orange-300">Data Quality</Link>
             </nav>
           </div>
         </header>
@@ -29,6 +31,7 @@ function App() {
               }
             />
             <Route path="/visualizer" element={<SchemaVisualizerPage />} />
+            <Route path="/dashboard" element={<DataQualityDashboardPage />} />
             <Route path="*" element={<Navigate to="/visualizer" replace />} />
           </Routes>
         </main>
