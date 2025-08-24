@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { getClassByName } from "@/data/api/categories.js";
 import { getClassSample, generateMultipleClassSamples } from "@/data/api/sample.js";
+import {
+  CodeBlock,
+  CodeBlockBody,
+  CodeBlockContent,
+  CodeBlockItem,
+} from "@/components/ui/kibo-ui/code-block";
 
 export default function ClassDetailsDrawer({ cls, onClose }) {
   const [activeTab, setActiveTab] = useState("schema");
@@ -51,8 +57,14 @@ export default function ClassDetailsDrawer({ cls, onClose }) {
 
   if (!cls) return null;
 
+  const currentJson = activeTab === 'schema'
+    ? jsonSchema
+    : activeTab === 'template'
+    ? requiredTemplate
+    : (samples.length ? samples : (cls.sample || {}));
+
   return (
-    <div className="fixed right-6 bottom-6 z-30 w-[560px] max-h-[80vh] overflow-auto rounded-xl border border-neutral-800 bg-neutral-900/95 backdrop-blur p-4 shadow-xl">
+    <div className="fixed right-6 bottom-6 z-30 w-[720px] max-h-[80vh] overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/95 backdrop-blur p-4 shadow-xl">
       <div className="flex items-start justify-between">
         <div>
           <div className="text-sm font-semibold text-orange-400">{cls.name}</div>
@@ -71,16 +83,23 @@ export default function ClassDetailsDrawer({ cls, onClose }) {
         </div>
       </div>
 
-      <div className="mt-3 rounded border border-neutral-800 bg-neutral-950 p-3 text-xs text-neutral-300 whitespace-pre-wrap break-all">
-        {loading && <div className="text-neutral-500">Loading…</div>}
-        {!loading && activeTab === 'schema' && (
-          <pre>{JSON.stringify(jsonSchema, null, 2)}</pre>
-        )}
-        {!loading && activeTab === 'template' && (
-          <pre>{JSON.stringify(requiredTemplate, null, 2)}</pre>
-        )}
-        {!loading && activeTab === 'sample' && (
-          <pre>{JSON.stringify(samples.length ? samples : (cls.sample || {}), null, 2)}</pre>
+      <div className="mt-3 rounded border border-neutral-800 bg-neutral-950">
+        {loading ? (
+          <div className="p-3 text-xs text-neutral-500">Loading…</div>
+        ) : (
+          <CodeBlock
+            className="h-[60vh]"
+            data={[{ language: 'json', filename: 'data.json', code: JSON.stringify(currentJson, null, 2) }]}
+            defaultValue="json"
+          >
+            <CodeBlockBody className="h-full">
+              <CodeBlockItem value="json" className="h-full overflow-auto">
+                <CodeBlockContent language="json">
+                  {JSON.stringify(currentJson, null, 2)}
+                </CodeBlockContent>
+              </CodeBlockItem>
+            </CodeBlockBody>
+          </CodeBlock>
         )}
       </div>
     </div>
