@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { generateMultipleClassSamples } from "@/data/api/sample.js";
+import { useState, useEffect, useMemo } from "react";
+import { getClassSample } from "@/data/api/sample.js";
 
 export default function ThreatHuntingPanel({ selectedClass, onClose }) {
   const [activeWorkflow, setActiveWorkflow] = useState(null);
@@ -7,7 +7,7 @@ export default function ThreatHuntingPanel({ selectedClass, onClose }) {
   const [loading, setLoading] = useState(false);
 
   // Pre-built threat hunting workflows
-  const huntingWorkflows = [
+  const huntingWorkflows = useMemo(() => [
     {
       id: "malware_investigation",
       name: "Malware Investigation",
@@ -33,7 +33,7 @@ export default function ThreatHuntingPanel({ selectedClass, onClose }) {
           step: 3,
           title: "Registry Analysis",
           description: "Check for persistence mechanisms and configuration changes",
-          class: "registry_activity",
+          class: "win/registry_key_activity",
           indicators: ["startup_keys", "persistence", "suspicious_values"],
           actions: ["backup_registry", "remove_keys", "monitor_changes"]
         },
@@ -103,13 +103,13 @@ export default function ThreatHuntingPanel({ selectedClass, onClose }) {
           step: 3,
           title: "Service Manipulation",
           description: "Investigate service creation and modification",
-          class: "windows_service_activity",
+          class: "win/windows_service_activity",
           indicators: ["new_services", "suspicious_paths", "privileged_services"],
           actions: ["disable_service", "investigate_path", "restore_defaults"]
         }
       ]
     }
-  ];
+  ], []);
 
   // Auto-select workflow based on selected class
   useEffect(() => {
@@ -130,14 +130,31 @@ export default function ThreatHuntingPanel({ selectedClass, onClose }) {
     const path = [];
     
     try {
+      // Only generate samples for the active step to avoid unnecessary API calls
       for (const step of workflow.steps) {
-        // Generate sample events for each step
-        const events = await generateMultipleClassSamples(step.class, 2);
+        const isActive = step.class === startingClass.name;
+        
+        let events = [];
+        if (isActive) {
+          try {
+            // Try to get a single sample for the active step
+            const response = await getClassSample(step.class);
+            events = response.data ? [response.data] : [];
+          } catch {
+            // If API fails, create a mock event structure
+            console.warn(`No samples available for ${step.class}, using mock data`);
+            events = [{
+              activity_name: `${step.class} sample`,
+              timestamp: new Date().toISOString(),
+              status: 'mock_data'
+            }];
+          }
+        }
         
         path.push({
           ...step,
-          events: events.data || [],
-          status: step.class === startingClass.name ? 'active' : 'pending',
+          events,
+          status: isActive ? 'active' : 'pending',
           timestamp: new Date().toISOString()
         });
       }
@@ -265,7 +282,12 @@ export default function ThreatHuntingPanel({ selectedClass, onClose }) {
                     {/* Sample Events */}
                     {step.events.length > 0 && (
                       <div className="mt-2 pt-2 border-t border-neutral-800">
-                        <div className="text-[10px] text-neutral-500 mb-1">Sample Events ({step.events.length}):</div>
+                        <div className="text-[10px] text-neutral-500 mb-1">
+                          Sample Events ({step.events.length})
+                          {step.events[0]?.status === 'mock_data' && (
+                            <span className="ml-1 text-yellow-400">(Mock Data)</span>
+                          )}
+                        </div>
                         <div className="text-[10px] text-neutral-400">
                           {step.events[0]?.activity_name || 'N/A'}
                         </div>

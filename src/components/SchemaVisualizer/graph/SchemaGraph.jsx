@@ -46,8 +46,8 @@ export default function SchemaGraph({ categoryKey, classes, objects = [], compos
       
       // Check if this class has threat hunting workflows
       const hasThreatHunting = [
-        'process_activity', 'file_activity', 'registry_activity', 'authentication',
-        'memory_activity', 'account_change', 'rdp_activity', 'windows_service_activity'
+        'process_activity', 'file_activity', 'win/registry_key_activity', 'authentication',
+        'memory_activity', 'account_change', 'rdp_activity', 'win/windows_service_activity'
       ].includes(c.name);
       
       nodes.push({
