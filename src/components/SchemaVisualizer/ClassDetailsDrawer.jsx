@@ -93,11 +93,13 @@ export default function ClassDetailsDrawer({ cls, onClose }) {
             defaultValue="json"
           >
             <CodeBlockBody className="h-full">
-              <CodeBlockItem value="json" className="h-full overflow-auto">
-                <CodeBlockContent language="json">
-                  {JSON.stringify(currentJson, null, 2)}
-                </CodeBlockContent>
-              </CodeBlockItem>
+              {(item) => (
+                <CodeBlockItem value={item.language} className="h-full overflow-auto">
+                  <CodeBlockContent language="json">
+                    {item.code}
+                  </CodeBlockContent>
+                </CodeBlockItem>
+              )}
             </CodeBlockBody>
           </CodeBlock>
         )}
